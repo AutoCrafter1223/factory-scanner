@@ -25,7 +25,7 @@ The mod reference is permanent after page creation. It already matches the plugi
 - **Stable compatibility:** Works only after the final game test passes
 - **Experimental compatibility:** Do not mark Works unless separately tested on that branch
 
-Upload only the newly rebuilt `release/ItemScanner-1.0.0-Windows.zip`. The older 0.3.10 package uses development metadata and must not be submitted.
+Upload only the newly rebuilt `release/ItemScanner-1.0.0.zip`. The older 0.3.10 package uses development metadata and must not be submitted.
 
 ## Image files prepared
 
