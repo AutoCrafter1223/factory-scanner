@@ -1,5 +1,6 @@
 #include "ItemScannerContent.h"
 #include "ItemScannerEquipment.h"
+#include "ItemScannerLocalization.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Texture2D.h"
 #include "UObject/ConstructorHelpers.h"
@@ -7,8 +8,10 @@
 UItemScannerDescriptor::UItemScannerDescriptor()
 {
     mUseDisplayNameAndDescription = true;
-    mDisplayName = NSLOCTEXT("ItemScanner", "EquipmentName", "Factory Scanner");
-    mDescription = NSLOCTEXT("ItemScanner", "EquipmentDescription", "Handheld factory diagnostic tool. Hold left click: control menu. Right click: scan. Shift+wheel: product selection.");
+    mDisplayName = ItemScannerLocalization::Text(TEXT("Factory Scanner"), TEXT("팩토리 스캐너"));
+    mDescription = ItemScannerLocalization::Text(
+        TEXT("Handheld factory diagnostic tool. Hold left click: control menu. Right click: scan. Shift+wheel: product selection."),
+        TEXT("휴대용 공장 진단 장비입니다. 좌클릭 유지: 제어 메뉴, 우클릭: 스캔, Shift+휠: 제품 선택."));
     mStackSize = EStackSize::SS_ONE;
     // This descriptor is a native CDO, not an asset that receives PostLoad.
     // CL502094 Shipping GetStackSize reads this cache directly; unlike the SDK
@@ -26,7 +29,7 @@ UItemScannerDescriptor::UItemScannerDescriptor()
 UItemScannerRecipe::UItemScannerRecipe()
 {
     mDisplayNameOverride = true;
-    mDisplayName = NSLOCTEXT("ItemScanner", "EquipmentName", "Factory Scanner");
+    mDisplayName = ItemScannerLocalization::Text(TEXT("Factory Scanner"), TEXT("팩토리 스캐너"));
     mManufactoringDuration = 20.0f;
     mProduct.Add(FItemAmount(UItemScannerDescriptor::StaticClass(), 1));
     // All temporary crafting costs live here, not in input/UI code.
@@ -48,7 +51,7 @@ UItemScannerRecipeUnlock::UItemScannerRecipeUnlock() { mRecipes.Add(UItemScanner
 UItemScannerSchematic::UItemScannerSchematic()
 {
     mType = ESchematicType::EST_Custom;
-    mDisplayName = NSLOCTEXT("ItemScanner", "EquipmentName", "Factory Scanner");
+    mDisplayName = ItemScannerLocalization::Text(TEXT("Factory Scanner"), TEXT("팩토리 스캐너"));
     mUnlocks.Add(CreateDefaultSubobject<UItemScannerRecipeUnlock>(TEXT("ScannerRecipeUnlock")));
 }
 UItemScannerGameWorldModule::UItemScannerGameWorldModule()

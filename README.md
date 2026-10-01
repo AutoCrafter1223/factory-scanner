@@ -67,7 +67,7 @@ Locally extracted Satisfactory reference assets, build products, backups, and de
 
 This repository is an SML plugin, not a complete Starter Project. Place it in `FactoryGame/Mods/ItemScanner` in the matching SML Starter Project and package it with Alpakit.
 
-Internal version 0.3.10 was built for Steam and Epic Win64 Shipping on 2026-10-01. Thirteen `ItemScanner` automation tests passed. The final public 1.0.0 package still requires the in-game checks listed in `RELEASE_CHECKLIST.md`.
+Version 1.0.0 is the pre-release build. Steam/Epic packaging, automated tests, and the remaining in-game checks are tracked in `RELEASE_CHECKLIST.md`.
 
 ## Privacy and support
 

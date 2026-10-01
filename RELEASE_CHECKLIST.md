@@ -9,10 +9,10 @@
 - [x] Item Radar and Connection Check screenshots are prepared under `Docs/images/`.
 - [x] SML dependency is declared as `^3.12.0`.
 - [x] Minimum game build is `502094`.
-- [x] Steam and Epic Win64 Shipping builds succeeded for internal version 0.3.10 on 2026-10-01.
-- [x] Thirteen Item Scanner automated tests passed for internal version 0.3.10 on 2026-10-01.
-- [x] Internal 0.3.10 recipe is 1 Object Scanner, 2 Rotors, and 2 Reinforced Iron Plates.
-- [x] Current internal package is backed up as `release/ItemScanner-0.3.10-Windows.zip`.
+- [x] Steam and Epic Win64 Shipping builds succeeded for version 1.0.0 on 2026-10-01.
+- [x] Thirteen Item Scanner automated tests passed for version 1.0.0 on 2026-10-01.
+- [x] Recipe is 1 Object Scanner, 2 Rotors, and 2 Reinforced Iron Plates.
+- [x] Pre-release version metadata is 1.0.0.
 
 ## Final in-game acceptance
 
@@ -31,11 +31,11 @@
 
 ## Public package and SMR
 
-- [ ] Change public version to 1.0.0: `Version: 1`, `VersionName: 1.0.0`, `SemVersion: 1.0.0`.
+- [x] Set version to 1.0.0: `Version: 1`, `VersionName: 1.0.0`, `SemVersion: 1.0.0`.
 - [x] Set the author name and source/docs/support URLs.
-- [ ] Rebuild editor, Steam Shipping, Epic Shipping, tests, and the combined Alpakit ZIP after metadata changes.
-- [ ] Verify the final ZIP includes `Resources/Icon128.png`, both client DLLs, and the pak/ucas/utoc payload.
-- [ ] Verify every packaged descriptor reports 1.0.0 and the module manifests retain `BuildId: SML`.
+- [x] Rebuild editor, Steam Shipping, Epic Shipping, tests, and the combined Alpakit ZIP after metadata changes.
+- [x] Verify the final ZIP includes `Resources/Icon128.png`, both client DLLs, and the pak/ucas/utoc payload.
+- [x] Verify every packaged descriptor reports 1.0.0 and the module manifests retain `BuildId: SML`.
 - [ ] Create the SMR page as hidden with permanent reference `ItemScanner`.
 - [ ] Upload the final 1.0.0 ZIP and paste `SMR_RELEASE_NOTES_1.0.0.md` into Changelog.
 - [ ] Set Stable compatibility to Works only after the corresponding branch test passes.

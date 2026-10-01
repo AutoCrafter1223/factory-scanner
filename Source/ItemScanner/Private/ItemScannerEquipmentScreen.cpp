@@ -2,6 +2,7 @@
 #include "ItemScannerEquipment.h"
 #include "ItemScannerManager.h"
 #include "ItemScannerDirectionWidget.h"
+#include "ItemScannerLocalization.h"
 #include "Resources/FGItemDescriptor.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
@@ -44,7 +45,7 @@ TSharedRef<SWidget> UItemScannerEquipmentScreen::RebuildWidget()
         if (bProductScreen)
         {
             Background->SetPadding(FMargin(16,8));
-            Heading=AddText(Layout,TEXT("SELECTED PRODUCT"),18,Amber);
+            Heading=AddText(Layout,ItemScannerLocalization::String(TEXT("SELECTED PRODUCT"),TEXT("선택 제품")),18,Amber);
             auto* Viewport=WidgetTree->ConstructWidget<UCanvasPanel>();
             Viewport->SetClipping(EWidgetClipping::ClipToBounds);
             Layout->AddChildToVerticalBox(Viewport)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
@@ -62,13 +63,13 @@ TSharedRef<SWidget> UItemScannerEquipmentScreen::RebuildWidget()
                 LineSlot->SetPosition(FVector2D(10,(I-1)*68+12)); LineSlot->SetSize(FVector2D(608,52));
                 ProductLines.Add(Line);
             }
-            Footer=AddText(Layout,TEXT("SHIFT + WHEEL"),14,Dim);
+            Footer=AddText(Layout,ItemScannerLocalization::String(TEXT("SHIFT + WHEEL"),TEXT("SHIFT + 휠")),14,Dim);
             return Super::RebuildWidget();
         }
         auto* Header=WidgetTree->ConstructWidget<UBorder>(); Header->SetBrushColor(Amber); Header->SetPadding(FMargin(12,7));
         auto* HeaderLayout=WidgetTree->ConstructWidget<UVerticalBox>(); Header->SetContent(HeaderLayout);
         Layout->AddChildToVerticalBox(Header)->SetPadding(FMargin(0,0,0,12));
-        Heading=AddText(HeaderLayout,TEXT("FACTORY SCANNER"),bProductScreen?22:27,Ink);
+        Heading=AddText(HeaderLayout,ItemScannerLocalization::String(TEXT("FACTORY SCANNER"),TEXT("팩토리 스캐너")),bProductScreen?22:27,Ink);
         auto HeaderFont=Heading->GetFont(); HeaderFont.TypefaceFontName=TEXT("Bold"); Heading->SetFont(HeaderFont);
         if (bProductScreen)
         {
@@ -83,7 +84,7 @@ TSharedRef<SWidget> UItemScannerEquipmentScreen::RebuildWidget()
                 auto* SelectionSlot=Layout->AddChildToVerticalBox(Selection); SelectionSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
                 SelectionSlot->SetPadding(FMargin(0,3));
             }
-            AddText(Layout,TEXT("ROTARY  /  SHIFT + WHEEL"),17,Dim);
+            AddText(Layout,ItemScannerLocalization::String(TEXT("ROTARY  /  SHIFT + WHEEL"),TEXT("로터리  /  SHIFT + 휠")),17,Dim);
         }
         else
         {
@@ -91,7 +92,7 @@ TSharedRef<SWidget> UItemScannerEquipmentScreen::RebuildWidget()
             Results=WidgetTree->ConstructWidget<UVerticalBox>();
             Results->SetClipping(EWidgetClipping::ClipToBounds);
             Layout->AddChildToVerticalBox(Results)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-            Footer=AddText(Layout,TEXT("RMB SCAN | LMB MENU | R NEXT PAGE"),18,Dim);
+            Footer=AddText(Layout,ItemScannerLocalization::String(TEXT("RMB SCAN | LMB MENU | R NEXT PAGE"),TEXT("우클릭 스캔 | 좌클릭 메뉴 | R 다음 페이지")),18,Dim);
         }
     }
     return Super::RebuildWidget();
@@ -102,30 +103,47 @@ void UItemScannerEquipmentScreen::Refresh(bool bRebuildResults)
     if (!Equipment || !Heading) return;
     const auto& State=Equipment->GetScannerState();
     const bool bConnections=State.Mode==EItemScannerMode::ConnectionCheck;
+    const bool bKorean=ItemScannerLocalization::IsKorean();
     if (bProductScreen)
     {
         if (ProductLines.Num()==5)
         {
-            Heading->SetText(FText::FromString(bConnections?TEXT("CONNECTION CHECK"):TEXT("SELECTED PRODUCT")));
-            Footer->SetText(FText::FromString(bConnections?TEXT("RMB TO SCAN"):TEXT("SHIFT + WHEEL")));
+            Heading->SetText(bConnections
+                ? ItemScannerLocalization::Text(TEXT("CONNECTION CHECK"),TEXT("연결 확인"))
+                : ItemScannerLocalization::Text(TEXT("SELECTED PRODUCT"),TEXT("선택 제품")));
+            Footer->SetText(bConnections
+                ? ItemScannerLocalization::Text(TEXT("RMB TO SCAN"),TEXT("우클릭으로 스캔"))
+                : ItemScannerLocalization::Text(TEXT("SHIFT + WHEEL"),TEXT("SHIFT + 휠")));
             for (int32 I=0;I<5;++I)
-                ProductLines[I]->SetText(bConnections?FText::FromString(I==2?TEXT("BELT + PIPE"):TEXT("")):Equipment->GetProductName(I-2));
+                ProductLines[I]->SetText(bConnections
+                    ? (I==2?ItemScannerLocalization::Text(TEXT("BELT + PIPE"),TEXT("벨트 + 파이프")):FText::GetEmpty())
+                    : Equipment->GetProductName(I-2));
             if (bConnections) { ProductScrollOffset=0; AdvanceProductAnimation(0); }
             return;
         }
         if (ProductLines.Num()==1)
         {
-            Heading->SetText(FText::FromString(bConnections?TEXT("CONNECTION CHECK"):TEXT("SELECTED PRODUCT")));
-            ProductLines[0]->SetText(bConnections?FText::FromString(TEXT("BELT + PIPE")):Equipment->GetProductName(0));
-            Footer->SetText(FText::FromString(bConnections?TEXT("RMB TO SCAN"):TEXT("SHIFT + WHEEL")));
+            Heading->SetText(bConnections
+                ? ItemScannerLocalization::Text(TEXT("CONNECTION CHECK"),TEXT("연결 확인"))
+                : ItemScannerLocalization::Text(TEXT("SELECTED PRODUCT"),TEXT("선택 제품")));
+            ProductLines[0]->SetText(bConnections?ItemScannerLocalization::Text(TEXT("BELT + PIPE"),TEXT("벨트 + 파이프")):Equipment->GetProductName(0));
+            Footer->SetText(bConnections
+                ? ItemScannerLocalization::Text(TEXT("RMB TO SCAN"),TEXT("우클릭으로 스캔"))
+                : ItemScannerLocalization::Text(TEXT("SHIFT + WHEEL"),TEXT("SHIFT + 휠")));
             return;
         }
-        Heading->SetText(FText::FromString(bConnections?TEXT("DIAGNOSTIC MODE"):TEXT("TARGET PRODUCT")));
+        Heading->SetText(bConnections
+            ? ItemScannerLocalization::Text(TEXT("DIAGNOSTIC MODE"),TEXT("진단 모드"))
+            : ItemScannerLocalization::Text(TEXT("TARGET PRODUCT"),TEXT("대상 제품")));
         if (ProductLines.Num()==3)
         {
             for (int32 I=0;I<3;++I)
             {
-                FString Text=bConnections?(I==0?TEXT("CONNECTION CHECK"):I==1?TEXT("BELT + PIPE"):TEXT("RMB TO SCAN")):Equipment->GetProductName(I-1).ToString();
+                FString Text=bConnections
+                    ? (I==0?ItemScannerLocalization::String(TEXT("CONNECTION CHECK"),TEXT("연결 확인"))
+                        :I==1?ItemScannerLocalization::String(TEXT("BELT + PIPE"),TEXT("벨트 + 파이프"))
+                        :ItemScannerLocalization::String(TEXT("RMB TO SCAN"),TEXT("우클릭으로 스캔")))
+                    :Equipment->GetProductName(I-1).ToString();
                 if (!bConnections && I==1) Text=TEXT("> ")+Text+TEXT(" <");
                 ProductLines[I]->SetText(FText::FromString(Text));
             }
@@ -134,18 +152,32 @@ void UItemScannerEquipmentScreen::Refresh(bool bRebuildResults)
     }
     auto* Manager=Equipment->GetScanner(); if (!Manager) return;
     const auto& Matches=Manager->GetCachedResults();
-    Heading->SetText(FText::FromString(bConnections?TEXT("02 / CONNECTION CHECK"):TEXT("01 / ITEM SEARCH")));
+    Heading->SetText(bConnections
+        ? ItemScannerLocalization::Text(TEXT("02 / CONNECTION CHECK"),TEXT("02 / 연결 확인"))
+        : ItemScannerLocalization::Text(TEXT("01 / ITEM SEARCH"),TEXT("01 / 제품 검색")));
     const auto& Last=Manager->GetLastRequest();
-    const FString CurrentTarget=bConnections?TEXT("BELT + PIPE"):Equipment->GetProductName(0).ToString();
-    const FString ScanTarget=Last.Mode==EItemScannerMode::ConnectionCheck?TEXT("BELT + PIPE"):Last.TargetItem?UFGItemDescriptor::GetItemName(Last.TargetItem).ToString():TEXT("—");
-    const FString CategoryLine=FString::Printf(TEXT("1 %s  2 %s  3 %s  4 %s"),(State.Categories&1)?TEXT("ON"):TEXT("OFF"),(State.Categories&2)?TEXT("ON"):TEXT("OFF"),
-        (State.Categories&4)?TEXT("ON"):TEXT("OFF"),(State.Categories&8)?TEXT("ON"):TEXT("OFF"));
+    const FString ScanTarget=Last.Mode==EItemScannerMode::ConnectionCheck
+        ? ItemScannerLocalization::String(TEXT("BELT + PIPE"),TEXT("벨트 + 파이프"))
+        : Last.TargetItem?UFGItemDescriptor::GetItemName(Last.TargetItem).ToString():TEXT("—");
+    const TCHAR* On=ItemScannerLocalization::Choose(TEXT("ON"),TEXT("켬"));
+    const TCHAR* Off=ItemScannerLocalization::Choose(TEXT("OFF"),TEXT("끔"));
+    const FString CategoryLine=FString::Printf(TEXT("1 %s  2 %s  3 %s  4 %s"),(State.Categories&1)?On:Off,(State.Categories&2)?On:Off,
+        (State.Categories&4)?On:Off,(State.Categories&8)?On:Off);
     const FString RangeLine=bConnections
-        ? FString::Printf(TEXT("RANGE %.0fm  |  GAP %.1fm  |  %s"),State.RangeMeters,State.ConnectionGapMeters,*Equipment->GetStatus().ToString())
-        : FString::Printf(TEXT("RANGE %.0fm  |  %s"),State.RangeMeters,*Equipment->GetStatus().ToString());
-    Subheading->SetText(FText::FromString(Equipment->ShouldShowInstructions()
-        ? FString::Printf(TEXT("%s\n%s\nSCAN: %s"),*RangeLine,*CategoryLine,*ScanTarget)
-        : FString::Printf(TEXT("%s\nSCAN: %s"),*RangeLine,*ScanTarget)));
+        ? (bKorean
+            ? FString::Printf(TEXT("거리 %.0fm  |  틈새 %.1fm  |  %s"),State.RangeMeters,State.ConnectionGapMeters,*Equipment->GetStatus().ToString())
+            : FString::Printf(TEXT("RANGE %.0fm  |  GAP %.1fm  |  %s"),State.RangeMeters,State.ConnectionGapMeters,*Equipment->GetStatus().ToString()))
+        : (bKorean
+            ? FString::Printf(TEXT("거리 %.0fm  |  %s"),State.RangeMeters,*Equipment->GetStatus().ToString())
+            : FString::Printf(TEXT("RANGE %.0fm  |  %s"),State.RangeMeters,*Equipment->GetStatus().ToString()));
+    const FString SubheadingText=Equipment->ShouldShowInstructions()
+        ? (bKorean
+            ? FString::Printf(TEXT("%s\n%s\n스캔: %s"),*RangeLine,*CategoryLine,*ScanTarget)
+            : FString::Printf(TEXT("%s\n%s\nSCAN: %s"),*RangeLine,*CategoryLine,*ScanTarget))
+        : (bKorean
+            ? FString::Printf(TEXT("%s\n스캔: %s"),*RangeLine,*ScanTarget)
+            : FString::Printf(TEXT("%s\nSCAN: %s"),*RangeLine,*ScanTarget));
+    Subheading->SetText(FText::FromString(SubheadingText));
     const int32 PageSize=AItemScannerEquipment::ResultsPerPage;
     const int32 Start=Equipment->GetResultPage()*PageSize;
     if (bRebuildResults)
@@ -180,23 +212,38 @@ void UItemScannerEquipmentScreen::Refresh(bool bRebuildResults)
             auto* Metric=WidgetTree->ConstructWidget<UTextBlock>();
             auto Font=Metric->GetFont(); Font.Size=27; Metric->SetFont(Font); Metric->SetColorAndOpacity(Cyan);
             Row->AddChildToHorizontalBox(Metric); RowMetrics.Add(Metric);
-            static const TCHAR* Categories[]={TEXT("STORAGE"),TEXT("PRODUCTION"),TEXT("CONVEYOR"),TEXT("LOGISTICS")};
-            auto* Detail=AddText(Card,R.bConnectionCandidate?FString::Printf(TEXT("%s | GAP %.1fcm"),R.bPipeline?TEXT("PIPE"):TEXT("BELT"),R.GapCentimeters):
-                FString::Printf(TEXT("%s | x%lld"),Categories[static_cast<uint8>(R.Category)],R.ItemAmount),18,Dim);
+            const TCHAR* Categories[]={
+                ItemScannerLocalization::Choose(TEXT("STORAGE"),TEXT("저장")),
+                ItemScannerLocalization::Choose(TEXT("PRODUCTION"),TEXT("생산")),
+                ItemScannerLocalization::Choose(TEXT("CONVEYOR"),TEXT("컨베이어")),
+                ItemScannerLocalization::Choose(TEXT("LOGISTICS"),TEXT("물류"))};
+            const FString DetailText=R.bConnectionCandidate
+                ? (bKorean
+                    ? FString::Printf(TEXT("%s | 틈새 %.1fcm"),R.bPipeline?TEXT("파이프"):TEXT("벨트"),R.GapCentimeters)
+                    : FString::Printf(TEXT("%s | GAP %.1fcm"),R.bPipeline?TEXT("PIPE"):TEXT("BELT"),R.GapCentimeters))
+                : FString::Printf(TEXT("%s | x%lld"),Categories[static_cast<uint8>(R.Category)],R.ItemAmount);
+            auto* Detail=AddText(Card,DetailText,18,Dim);
             Detail->SetAutoWrapText(false); Detail->SetTextOverflowPolicy(ETextOverflowPolicy::Ellipsis);
         }
         if (Matches.IsEmpty()) AddText(Results,Equipment->ShouldShowInstructions()
-            ? TEXT("CONTROLS\nHOLD LMB  CONTROL MENU\nRMB  SCAN\nSHIFT + WHEEL  SELECT PRODUCT\nR  NEXT PAGE\n\nRELEASE LMB TO SELECT")
-            : TEXT("NO MATCHES\nCHANGE TARGET OR FILTERS\nTHEN RMB TO RESCAN"),27,Dim);
+            ? ItemScannerLocalization::String(
+                TEXT("CONTROLS\nHOLD LMB  CONTROL MENU\nRMB  SCAN\nSHIFT + WHEEL  SELECT PRODUCT\nR  NEXT PAGE\n\nRELEASE LMB TO SELECT"),
+                TEXT("조작법\n좌클릭 유지  제어 메뉴\n우클릭  스캔\nSHIFT + 휠  제품 선택\nR  다음 페이지\n\n좌클릭을 놓아 선택"))
+            : ItemScannerLocalization::String(
+                TEXT("NO MATCHES\nCHANGE TARGET OR FILTERS\nTHEN RMB TO RESCAN"),
+                TEXT("검색 결과 없음\n대상 또는 필터를 변경한 뒤\n우클릭으로 다시 스캔")),27,Dim);
     }
     for (int32 I=0;I<RowMetrics.Num() && Matches.IsValidIndex(Start+I);++I)
     {
         const auto& R=Matches[Start+I];
-        RowMetrics[I]->SetText(FText::FromString(R.bIsValid?FString::Printf(TEXT("%.0fm  H%+.0fm"),R.CurrentDistanceMeters,R.HeightDifferenceMeters):TEXT("REMOVED")));
+        RowMetrics[I]->SetText(FText::FromString(R.bIsValid?FString::Printf(TEXT("%.0fm  H%+.0fm"),R.CurrentDistanceMeters,R.HeightDifferenceMeters):ItemScannerLocalization::Choose(TEXT("REMOVED"),TEXT("제거됨"))));
         RowArrows[I]->SetRenderTransformAngle(R.RelativeYawDegrees);
         RowArrows[I]->SetRenderOpacity(R.bIsValid?1.f:0.2f);
     }
-    Footer->SetText(FText::FromString(FString::Printf(TEXT("%d RESULTS | PAGE %d/%d\nRMB SCAN  ·  LMB MENU  ·  R PAGE"),Matches.Num(),Equipment->GetResultPage()+1,FMath::Max(1,FMath::DivideAndRoundUp(Matches.Num(),PageSize)))));
+    const int32 PageCount=FMath::Max(1,FMath::DivideAndRoundUp(Matches.Num(),PageSize));
+    Footer->SetText(FText::FromString(bKorean
+        ? FString::Printf(TEXT("결과 %d개 | 페이지 %d/%d\n우클릭 스캔  ·  좌클릭 메뉴  ·  R 페이지"),Matches.Num(),Equipment->GetResultPage()+1,PageCount)
+        : FString::Printf(TEXT("%d RESULTS | PAGE %d/%d\nRMB SCAN  ·  LMB MENU  ·  R PAGE"),Matches.Num(),Equipment->GetResultPage()+1,PageCount)));
 }
 void UItemScannerEquipmentScreen::AnimateProductStep(int32 Direction, float Duration)
 {

@@ -7,6 +7,7 @@
 #include "ItemScannerWorldSubsystem.h"
 #include "ItemScannerSettings.h"
 #include "ItemScannerModConfig.h"
+#include "ItemScannerLocalization.h"
 #include "FGCharacterPlayer.h"
 #include "FGPlayerController.h"
 #include "Components/StaticMeshComponent.h"
@@ -112,7 +113,11 @@ AItemScannerEquipment::AItemScannerEquipment()
         Component->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         Component->SetCastShadow(false);
     };
-    const TCHAR* Categories[]={TEXT("STORAGE"),TEXT("PRODUCTION"),TEXT("CONVEYOR"),TEXT("LOGISTICS")};
+    const TCHAR* Categories[]={
+        ItemScannerLocalization::Choose(TEXT("STORAGE"),TEXT("저장")),
+        ItemScannerLocalization::Choose(TEXT("PRODUCTION"),TEXT("생산")),
+        ItemScannerLocalization::Choose(TEXT("CONVEYOR"),TEXT("컨베이어")),
+        ItemScannerLocalization::Choose(TEXT("LOGISTICS"),TEXT("물류"))};
     ConstructorHelpers::FObjectFinder<UStaticMesh> LightMesh(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
     ConstructorHelpers::FObjectFinder<UMaterialInterface> LightMaterial(TEXT("/ItemScanner/Equipment/M_StatusLED.M_StatusLED"));
     for (int32 I=0;I<4;++I)
@@ -127,8 +132,8 @@ AItemScannerEquipment::AItemScannerEquipment()
         Light->SetCollisionEnabled(ECollisionEnabled::NoCollision); Light->SetCastShadow(false);
         StatusLights.Add(Light);
     }
-    Label(TEXT("ModeItem"),TEXT("ITEM\nRADAR"),FVector(-5.85,-1.80,-11.15),0.42f);
-    Label(TEXT("ModeGap"),TEXT("GAP\nCHECK"),FVector(-8.15,-1.80,-11.15),0.42f);
+    Label(TEXT("ModeItem"),ItemScannerLocalization::Choose(TEXT("ITEM\nRADAR"),TEXT("제품\n탐색")),FVector(-5.85,-1.80,-11.15),0.42f);
+    Label(TEXT("ModeGap"),ItemScannerLocalization::Choose(TEXT("GAP\nCHECK"),TEXT("틈새\n감지")),FVector(-8.15,-1.80,-11.15),0.42f);
     Label(TEXT("SerialMark"),TEXT("FICSIT  /  FS-02"),FVector(2.0,-3.54,3.18),0.25f);
 }
 
@@ -158,7 +163,7 @@ void AItemScannerEquipment::Equip(AFGCharacterPlayer* Character)
         MainDisplay->SetWidget(MainScreen);
         MainScreen->TakeWidget();
     }
-    Status=FText::FromString(TEXT("READY")); ResultPage=0; VisualDialDegrees=State.DialSteps*30.f;
+    Status=ItemScannerLocalization::Text(TEXT("READY"),TEXT("준비")); ResultPage=0; VisualDialDegrees=State.DialSteps*30.f;
     ProductScreen=CreateWidget<UItemScannerEquipmentScreen>(Controller);
     if (ProductScreen) { ProductScreen->Configure(this,true); ProductDisplay->SetWidget(ProductScreen); ProductScreen->TakeWidget(); }
     bHasScannedThisEquip=false;
@@ -414,7 +419,7 @@ void AItemScannerEquipment::UpdateRadialSelection()
 FText AItemScannerEquipment::GetProductName(int32 Offset) const
 {
     if (Offset==0 && State.TargetItem) return UFGItemDescriptor::GetItemName(State.TargetItem);
-    if (!Catalog || Catalog->GetItems().IsEmpty()) return FText::FromString(TEXT("Loading products..."));
+    if (!Catalog || Catalog->GetItems().IsEmpty()) return ItemScannerLocalization::Text(TEXT("Loading products..."),TEXT("제품 불러오는 중..."));
     const auto& Items=Catalog->GetItems();
     const int32 I=UItemScannerCatalog::WrapIndex(FMath::Max(0,Items.IndexOfByKey(State.TargetItem))+Offset,Items.Num());
     return UFGItemDescriptor::GetItemName(Items[I]);
@@ -483,7 +488,9 @@ void AItemScannerEquipment::Scan()
     if (Scanner->ExecuteScan(InputController.Get(),Request,Error))
     {
         Tracking->StartTracking(InputController.Get());
-        Status=FText::FromString(State.Mode==EItemScannerMode::ConnectionCheck?TEXT("CANDIDATES"):TEXT("TRACKING"));
+        Status=State.Mode==EItemScannerMode::ConnectionCheck
+            ? ItemScannerLocalization::Text(TEXT("CANDIDATES"),TEXT("후보"))
+            : ItemScannerLocalization::Text(TEXT("TRACKING"),TEXT("추적 중"));
     }
     else Status=Error;
     ResultPage=0; RefreshScreens(true);

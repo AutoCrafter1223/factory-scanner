@@ -1,6 +1,7 @@
 #include "ItemScannerManager.h"
 #include "ItemScannerConnectionMath.h"
 #include "ItemScannerSettings.h"
+#include "ItemScannerLocalization.h"
 #include "Buildables/FGBuildable.h"
 #include "Buildables/FGBuildableConveyorBase.h"
 #include "Buildables/FGBuildablePipeline.h"
@@ -40,7 +41,7 @@ bool UItemScannerManager::ExecuteConnectionScan(APlayerController* Controller, c
     if (!IsValid(Controller) || !IsValid(Controller->GetPawn()) || !IsValid(Controller->GetWorld()) ||
         !FMath::IsFinite(Request.RangeMeters) || Request.RangeMeters <= 0)
     {
-        OutError = NSLOCTEXT("ItemScanner", "ConnectionNotReady", "Player or scan range is not ready.");
+        OutError = ItemScannerLocalization::Text(TEXT("Player or scan range is not ready."),TEXT("플레이어 또는 스캔 거리가 준비되지 않았습니다."));
         return false;
     }
     const auto* Settings = GetDefault<UItemScannerSettings>();

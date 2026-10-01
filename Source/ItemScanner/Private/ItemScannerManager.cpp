@@ -3,6 +3,7 @@
 #include "ItemScannerMath.h"
 #include "ItemScannerModule.h"
 #include "ItemScannerSettings.h"
+#include "ItemScannerLocalization.h"
 
 #include "Buildables/FGBuildable.h"
 #include "Buildables/FGBuildableConveyorBase.h"
@@ -58,26 +59,26 @@ bool UItemScannerManager::ExecuteScan(APlayerController* PlayerController, const
 
     if (!IsValid(PlayerController) || !IsValid(PlayerController->GetPawn()))
     {
-        OutError = NSLOCTEXT("ItemScanner", "NoPlayer", "Player is not ready.");
+        OutError = ItemScannerLocalization::Text(TEXT("Player is not ready."),TEXT("플레이어가 준비되지 않았습니다."));
         return false;
     }
 
     if (!Request.TargetItem)
     {
-        OutError = NSLOCTEXT("ItemScanner", "NoTarget", "Select a target item first.");
+        OutError = ItemScannerLocalization::Text(TEXT("Select a target item first."),TEXT("먼저 대상 제품을 선택하세요."));
         return false;
     }
 
     if (!Request.Categories.IsAnyEnabled())
     {
-        OutError = NSLOCTEXT("ItemScanner", "NoCategories", "Enable at least one object category.");
+        OutError = ItemScannerLocalization::Text(TEXT("Enable at least one object category."),TEXT("하나 이상의 검색 분류를 켜세요."));
         return false;
     }
 
     const UItemScannerSettings* Settings = GetDefault<UItemScannerSettings>();
     if (!FMath::IsFinite(Request.RangeMeters) || Request.RangeMeters <= 0.0f)
     {
-        OutError = NSLOCTEXT("ItemScanner", "BadRange", "Enter a scan range greater than zero.");
+        OutError = ItemScannerLocalization::Text(TEXT("Enter a scan range greater than zero."),TEXT("스캔 거리는 0보다 커야 합니다."));
         return false;
     }
 
@@ -88,7 +89,7 @@ bool UItemScannerManager::ExecuteScan(APlayerController* PlayerController, const
     UWorld* World = PlayerController->GetWorld();
     if (!IsValid(World))
     {
-        OutError = NSLOCTEXT("ItemScanner", "NoWorld", "The game world is not ready.");
+        OutError = ItemScannerLocalization::Text(TEXT("The game world is not ready."),TEXT("게임 월드가 준비되지 않았습니다."));
         return false;
     }
 

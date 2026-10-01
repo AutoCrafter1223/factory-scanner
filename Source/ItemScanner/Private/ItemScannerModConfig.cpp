@@ -1,4 +1,5 @@
 #include "ItemScannerModConfig.h"
+#include "ItemScannerLocalization.h"
 
 #include "Configuration/ConfigManager.h"
 #include "Configuration/Properties/ConfigPropertyFloat.h"
@@ -172,8 +173,10 @@ TSharedRef<SWidget> UItemScannerAngleConfigEditorWidget::RebuildWidget()
 UItemScannerModConfiguration::UItemScannerModConfiguration()
 {
     ConfigId = ItemScannerConfigId;
-    DisplayName = FText::FromString(TEXT("Equipment Transform"));
-    Description = FText::FromString(TEXT("Adjust the first-person scanner transform. Changes apply immediately."));
+    DisplayName = ItemScannerLocalization::Text(TEXT("Equipment Transform"),TEXT("장비 위치 조정"));
+    Description = ItemScannerLocalization::Text(
+        TEXT("Adjust the first-person scanner transform. Changes apply immediately."),
+        TEXT("1인칭 스캐너의 위치와 회전을 조정합니다. 변경 사항은 즉시 적용됩니다."));
 
     RootSection = CreateDefaultSubobject<UItemScannerAngleConfigSection>(TEXT("RootSection"));
     RootSection->DisplayName = DisplayName;

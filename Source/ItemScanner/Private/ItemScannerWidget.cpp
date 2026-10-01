@@ -4,6 +4,7 @@
 #include "ItemScannerDirectionWidget.h"
 #include "ItemScannerItemOptionWidget.h"
 #include "ItemScannerSettings.h"
+#include "ItemScannerLocalization.h"
 #include "ItemScannerTrackingManager.h"
 #include "ItemScannerWorldSubsystem.h"
 #include "ItemScannerCatalog.h"
@@ -113,7 +114,7 @@ void UItemScannerWidget::PrepareForOpen()
 
     if (!BuildItemCatalogFromRecipes())
     {
-        SetStatus(NSLOCTEXT("ItemScanner", "CatalogNotReady", "Item catalog is still loading. Reopen the scanner shortly."),
+        SetStatus(ItemScannerLocalization::Text(TEXT("Item catalog is still loading. Reopen the scanner shortly."),TEXT("제품 목록을 불러오는 중입니다. 잠시 후 스캐너를 다시 여세요.")),
             FLinearColor(1.0f, 0.75f, 0.25f, 1.0f));
         return;
     }
@@ -121,7 +122,7 @@ void UItemScannerWidget::PrepareForOpen()
     const FString Filter = IsValid(SearchBox) ? SearchBox->GetText().ToString() : FString();
     RefreshItemOptions(Filter);
     SetStatus(FText::Format(
-        NSLOCTEXT("ItemScanner", "CatalogReady", "Loaded {0} items from {1} vanilla/mod recipes."),
+        ItemScannerLocalization::Text(TEXT("Loaded {0} items from {1} vanilla/mod recipes."),TEXT("기본 게임/모드 레시피 {1}개에서 제품 {0}개를 불러왔습니다.")),
         FText::AsNumber(AvailableItems.Num()),
         FText::AsNumber(CachedRecipeCount)), MutedColor);
 }
@@ -153,7 +154,7 @@ void UItemScannerWidget::BuildInterface()
 
     UHorizontalBox* TitleRow = WidgetTree->ConstructWidget<UHorizontalBox>();
     MainBox->AddChildToVerticalBox(TitleRow);
-    UTextBlock* Title = MakeText(WidgetTree, NSLOCTEXT("ItemScanner", "Title", "ITEM SCANNER"), 24, AccentColor);
+    UTextBlock* Title = MakeText(WidgetTree, ItemScannerLocalization::Text(TEXT("ITEM SCANNER"),TEXT("아이템 스캐너")), 24, AccentColor);
     UHorizontalBoxSlot* TitleSlot = TitleRow->AddChildToHorizontalBox(Title);
     TitleSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     TitleRow->AddChildToHorizontalBox(MakeText(WidgetTree, FText::FromString(TEXT("F7")), 12, MutedColor));
@@ -162,9 +163,9 @@ void UItemScannerWidget::BuildInterface()
     UHorizontalBoxSlot* CloseSlot = TitleRow->AddChildToHorizontalBox(CloseButton);
     CloseSlot->SetPadding(FMargin(12.0f, 0.0f, 0.0f, 0.0f));
 
-    AddSectionLabel(WidgetTree, MainBox, NSLOCTEXT("ItemScanner", "TargetItem", "TARGET ITEM"));
+    AddSectionLabel(WidgetTree, MainBox, ItemScannerLocalization::Text(TEXT("TARGET ITEM"),TEXT("대상 제품")));
     SearchBox = WidgetTree->ConstructWidget<UEditableTextBox>();
-    SearchBox->SetHintText(NSLOCTEXT("ItemScanner", "SearchHint", "Search item name..."));
+    SearchBox->SetHintText(ItemScannerLocalization::Text(TEXT("Search item name..."),TEXT("제품 이름 검색...")));
     SearchBox->OnTextChanged.AddDynamic(this, &UItemScannerWidget::HandleSearchTextChanged);
     MainBox->AddChildToVerticalBox(SearchBox)->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 5.0f));
 
@@ -173,7 +174,7 @@ void UItemScannerWidget::BuildInterface()
     ItemComboBox->OnSelectionChanged.AddDynamic(this, &UItemScannerWidget::HandleItemSelectionChanged);
     MainBox->AddChildToVerticalBox(ItemComboBox);
 
-    AddSectionLabel(WidgetTree, MainBox, NSLOCTEXT("ItemScanner", "Categories", "OBJECT CATEGORIES"));
+    AddSectionLabel(WidgetTree, MainBox, ItemScannerLocalization::Text(TEXT("OBJECT CATEGORIES"),TEXT("검색 분류")));
     UHorizontalBox* CategoriesRow = WidgetTree->ConstructWidget<UHorizontalBox>();
     MainBox->AddChildToVerticalBox(CategoriesRow);
 
@@ -190,12 +191,12 @@ void UItemScannerWidget::BuildInterface()
         PairSlot->SetPadding(FMargin(0.0f, 2.0f));
     };
 
-    AddCategory(NSLOCTEXT("ItemScanner", "Storage", "Storage"), StorageCheckBox);
-    AddCategory(NSLOCTEXT("ItemScanner", "Production", "Production"), ProductionCheckBox);
-    AddCategory(NSLOCTEXT("ItemScanner", "Conveyor", "Conveyor"), ConveyorCheckBox);
-    AddCategory(NSLOCTEXT("ItemScanner", "Logistics", "Logistics"), LogisticsCheckBox);
+    AddCategory(ItemScannerLocalization::Text(TEXT("Storage"),TEXT("저장")), StorageCheckBox);
+    AddCategory(ItemScannerLocalization::Text(TEXT("Production"),TEXT("생산")), ProductionCheckBox);
+    AddCategory(ItemScannerLocalization::Text(TEXT("Conveyor"),TEXT("컨베이어")), ConveyorCheckBox);
+    AddCategory(ItemScannerLocalization::Text(TEXT("Logistics"),TEXT("물류")), LogisticsCheckBox);
 
-    AddSectionLabel(WidgetTree, MainBox, NSLOCTEXT("ItemScanner", "Range", "SCAN RANGE"));
+    AddSectionLabel(WidgetTree, MainBox, ItemScannerLocalization::Text(TEXT("SCAN RANGE"),TEXT("스캔 거리")));
     UHorizontalBox* RangeRow = WidgetTree->ConstructWidget<UHorizontalBox>();
     MainBox->AddChildToVerticalBox(RangeRow);
     RangeSpinBox = WidgetTree->ConstructWidget<USpinBox>();
@@ -212,12 +213,12 @@ void UItemScannerWidget::BuildInterface()
     UHorizontalBoxSlot* MeterSlot = RangeRow->AddChildToHorizontalBox(MakeText(WidgetTree, FText::FromString(TEXT("m")), 15));
     MeterSlot->SetPadding(FMargin(6.0f, 4.0f, 0.0f, 0.0f));
 
-    UButton* ScanButton = MakeTextButton(WidgetTree, NSLOCTEXT("ItemScanner", "Scan", "SCAN"), 18);
+    UButton* ScanButton = MakeTextButton(WidgetTree, ItemScannerLocalization::Text(TEXT("SCAN"),TEXT("스캔")), 18);
     ScanButton->OnClicked.AddDynamic(this, &UItemScannerWidget::HandleScanClicked);
     UVerticalBoxSlot* ScanSlot = MainBox->AddChildToVerticalBox(ScanButton);
     ScanSlot->SetPadding(FMargin(0.0f, 12.0f, 0.0f, 6.0f));
 
-    StatusText = MakeText(WidgetTree, NSLOCTEXT("ItemScanner", "Ready", "Select an item, then scan."), 13, MutedColor);
+    StatusText = MakeText(WidgetTree, ItemScannerLocalization::Text(TEXT("Select an item, then scan."),TEXT("제품을 선택한 뒤 스캔하세요.")), 13, MutedColor);
     MainBox->AddChildToVerticalBox(StatusText);
 
     ResultsBorder = WidgetTree->ConstructWidget<UBorder>();
@@ -325,7 +326,7 @@ void UItemScannerWidget::BuildResultRows()
         const int32 Range = FMath::RoundToInt(ScannerManager->GetLastRequest().RangeMeters);
         UTextBlock* EmptyText = MakeText(
             WidgetTree,
-            FText::Format(NSLOCTEXT("ItemScanner", "NoMatches", "No matching items found within {0}m."), FText::AsNumber(Range)),
+            FText::Format(ItemScannerLocalization::Text(TEXT("No matching items found within {0}m."),TEXT("{0}m 안에서 일치하는 제품을 찾지 못했습니다.")), FText::AsNumber(Range)),
             15,
             FLinearColor(1.0f, 0.75f, 0.25f, 1.0f));
         ResultsScrollBox->AddChild(EmptyText);
@@ -405,8 +406,8 @@ void UItemScannerWidget::RefreshResultValues()
 
         if (!Result.bIsValid)
         {
-            Row.NameText->SetText(FText::Format(NSLOCTEXT("ItemScanner", "Removed", "{0} (removed)"), Result.ObjectDisplayName));
-            Row.DistanceText->SetText(NSLOCTEXT("ItemScanner", "Invalid", "Invalid"));
+            Row.NameText->SetText(FText::Format(ItemScannerLocalization::Text(TEXT("{0} (removed)"),TEXT("{0} (제거됨)")), Result.ObjectDisplayName));
+            Row.DistanceText->SetText(ItemScannerLocalization::Text(TEXT("Invalid"),TEXT("유효하지 않음")));
             Row.HeightText->SetText(FText::GetEmpty());
             Row.DirectionArrow->SetVisibility(ESlateVisibility::Hidden);
             continue;
@@ -422,15 +423,19 @@ void UItemScannerWidget::RefreshResultValues()
         const int32 Height = FMath::RoundToInt(Result.HeightDifferenceMeters);
         if (Height > 0)
         {
-            Row.HeightText->SetText(FText::FromString(FString::Printf(TEXT("Height: +%dm"), Height)));
+            Row.HeightText->SetText(FText::FromString(ItemScannerLocalization::IsKorean()
+                ? FString::Printf(TEXT("높이: +%dm"), Height)
+                : FString::Printf(TEXT("Height: +%dm"), Height)));
         }
         else if (Height < 0)
         {
-            Row.HeightText->SetText(FText::FromString(FString::Printf(TEXT("Height: %dm"), Height)));
+            Row.HeightText->SetText(FText::FromString(ItemScannerLocalization::IsKorean()
+                ? FString::Printf(TEXT("높이: %dm"), Height)
+                : FString::Printf(TEXT("Height: %dm"), Height)));
         }
         else
         {
-            Row.HeightText->SetText(FText::FromString(TEXT("Height: 0m")));
+            Row.HeightText->SetText(ItemScannerLocalization::Text(TEXT("Height: 0m"),TEXT("높이: 0m")));
         }
 
         const FText ItemName = UFGItemDescriptor::GetItemName(Result.TargetItem);
@@ -476,7 +481,7 @@ void UItemScannerWidget::HandleScanClicked()
 {
     if (!IsValid(ScannerManager) || !IsValid(TrackingManager) || !PlayerController.IsValid())
     {
-        SetStatus(NSLOCTEXT("ItemScanner", "Unavailable", "Scanner is not ready."), FLinearColor::Red);
+        SetStatus(ItemScannerLocalization::Text(TEXT("Scanner is not ready."),TEXT("스캐너가 준비되지 않았습니다.")), FLinearColor::Red);
         return;
     }
 
@@ -499,7 +504,7 @@ void UItemScannerWidget::HandleScanClicked()
 
     const FText TargetName = UFGItemDescriptor::GetItemName(SelectedItemClass);
     SummaryText->SetText(FText::Format(
-        NSLOCTEXT("ItemScanner", "Summary", "TARGET: {0}   RANGE: {1}m"),
+        ItemScannerLocalization::Text(TEXT("TARGET: {0}   RANGE: {1}m"),TEXT("대상: {0}   거리: {1}m")),
         TargetName,
         FText::AsNumber(FMath::RoundToInt(ScannerManager->GetLastRequest().RangeMeters))));
     ResultsBorder->SetVisibility(ESlateVisibility::Visible);
@@ -507,7 +512,7 @@ void UItemScannerWidget::HandleScanClicked()
     TrackingManager->StartTracking(PlayerController.Get());
 
     const int32 MatchCount = ScannerManager->GetCachedResults().Num();
-    SetStatus(FText::Format(NSLOCTEXT("ItemScanner", "Found", "Scan complete: {0} match(es)."), FText::AsNumber(MatchCount)), AccentColor);
+    SetStatus(FText::Format(ItemScannerLocalization::Text(TEXT("Scan complete: {0} match(es)."),TEXT("스캔 완료: 결과 {0}개.")), FText::AsNumber(MatchCount)), AccentColor);
 }
 
 void UItemScannerWidget::HandleCloseClicked()
@@ -571,5 +576,5 @@ void UItemScannerWidget::ClearScan()
     {
         ResultsBorder->SetVisibility(ESlateVisibility::Collapsed);
     }
-    SetStatus(NSLOCTEXT("ItemScanner", "Ready", "Select an item, then scan."), MutedColor);
+    SetStatus(ItemScannerLocalization::Text(TEXT("Select an item, then scan."),TEXT("제품을 선택한 뒤 스캔하세요.")), MutedColor);
 }

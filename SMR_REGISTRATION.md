@@ -25,7 +25,7 @@ The mod reference is permanent after page creation. It already matches the plugi
 - **Stable compatibility:** Works only after the final game test passes
 - **Experimental compatibility:** Do not mark Works unless separately tested on that branch
 
-Do not upload `release/ItemScanner-0.3.10-Windows.zip` as the public release. It is the verified internal test package, but its descriptor uses the development version scheme. The public package must use matching `Version`, `VersionName`, and `SemVersion` values for 1.0.0 and must be rebuilt afterward.
+Upload only the newly rebuilt `release/ItemScanner-1.0.0-Windows.zip`. The older 0.3.10 package uses development metadata and must not be submitted.
 
 ## Image files prepared
 
@@ -33,4 +33,4 @@ Do not upload `release/ItemScanner-0.3.10-Windows.zip` as the public release. It
 - `Docs/images/connection-check.png`: Connection Check gameplay screenshot
 - `Resources/Icon128.png`: square mod icon used by the in-game Mods page and SMR
 
-The two screenshots can be uploaded to a public repository and embedded in the full description after permanent URLs exist. The full description is usable without them.
+The screenshots are hosted in the public GitHub repository and are already embedded in `SMR_DESCRIPTION.md`.
