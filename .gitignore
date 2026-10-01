@@ -1,0 +1,28 @@
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+.vs/
+.idea/
+.sml-reference/
+*.sln
+*.VC.db
+.tools/
+Tools/__pycache__/
+Tools/.dotnet10/
+Tools/.nuget-feed/
+Tools/PortableMinerExtractor/bin/
+Tools/PortableMinerExtractor/obj/
+.dotnet-cli/
+release/
+oodle-data-shared.dll
+Damyang4F_Encasing/
+
+# Locally extracted Coffee Stain game assets are reference-only and must not
+# be redistributed. Keep only the original scanner2 CAD and generated data.
+model/reference/
+model/model.zip
+model/model.7z
+model/*.SLDPRT
+model/*.SLDASM
+model/*.STEP

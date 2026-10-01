@@ -1,0 +1,20 @@
+{
+  "source": "model/scanner2/scanner2.STEP",
+  "step_sha256": "f95df9f719626e8233700b5eca032066ef8fa2d5eb879ff2aa296dc31f09c294",
+  "screen_face": 51,
+  "triangles": 21366,
+  "material_slots": [
+    "Paint",
+    "Trim",
+    "Rubber",
+    "Metal",
+    "Marking",
+    "SafetyRed",
+    "Glass"
+  ],
+  "object_scanner_alignment": {
+    "x_origin": -0.297,
+    "y_origin": -39.153,
+    "z_origin": 198.635
+  }
+}

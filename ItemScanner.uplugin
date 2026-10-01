@@ -1,0 +1,31 @@
+{
+  "FileVersion": 3,
+  "Version": 26,
+  "VersionName": "0.3.10",
+  "SemVersion": "0.3.10",
+  "GameVersion": ">=502094",
+  "FriendlyName": "Factory Scanner",
+  "Description": "Handheld item radar and belt/pipe connection-gap scanner with live direction tracking.",
+  "Category": "Utility",
+  "CreatedBy": "AutoCrafter1223",
+  "CreatedByURL": "https://github.com/AutoCrafter1223",
+  "DocsURL": "https://github.com/AutoCrafter1223/factory-scanner",
+  "SupportURL": "https://github.com/AutoCrafter1223/factory-scanner/issues",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "ItemScanner",
+      "Type": "Runtime",
+      "LoadingPhase": "PostDefault"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "SML",
+      "Enabled": true,
+      "SemVersion": "^3.12.0"
+    }
+  ]
+}
